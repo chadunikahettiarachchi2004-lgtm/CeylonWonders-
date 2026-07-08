@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Ceylon Wonders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png" />
+  <link rel="apple-touch-icon" href="images/favicon-192.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png" />
+  <link rel="apple-touch-icon" href="images/favicon-192.png" />
+  <style>
+    .contact-section { padding: 80px 0 96px; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+
+    .contact-info h2 { font-size: clamp(28px, 4vw, 40px); color: var(--green-dark); margin-bottom: 16px; }
+    .contact-info p { color: var(--text-muted); line-height: 1.9; margin-bottom: 36px; }
+
+    .info-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .info-card-icon {
+      width: 44px; height: 44px;
+      background: rgba(45,106,79,0.1);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .info-card-text h4 { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700; color: var(--green-dark); margin-bottom: 4px; }
+    .info-card-text p { font-size: 14px; color: var(--text-muted); margin: 0; }
+    .info-card-text a { color: var(--green-mid); font-weight: 600; }
+
+    .hours-block { background: var(--green-dark); border-radius: var(--radius-lg); padding: 24px; margin-top: 24px; }
+    .hours-block h4 { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .hours-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row span { font-size: 14px; color: rgba(255,255,255,0.7); }
+    .hours-row strong { font-size: 14px; color: var(--white); }
+
+    /* FORM */
+    .contact-form-wrap {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      box-shadow: var(--shadow-md);
+    }
+    .form-header { margin-bottom: 32px; }
+    .form-header h3 { font-size: 26px; color: var(--green-dark); margin-bottom: 8px; }
+    .form-header p { font-size: 14px; color: var(--text-muted); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; letter-spacing: 0.3px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid #E0DDD6;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-family: 'Lato', sans-serif;
+      color: var(--text-dark);
+      background: var(--cream);
+      transition: var(--transition);
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--green-mid); background: var(--white); box-shadow: 0 0 0 3px rgba(45,106,79,0.1); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-group select { cursor: pointer; }
+
+    .form-submit { width: 100%; padding: 16px; font-size: 16px; border-radius: var(--radius-xl); margin-top: 8px; }
+    .form-note { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted); }
+
+    .success-msg {
+      display: none;
+      background: rgba(82,183,136,0.12);
+      border: 1.5px solid var(--green-light);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      color: var(--green-dark);
+      font-size: 15px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* MAP PLACEHOLDER */
+    .map-section { background: var(--cream-dark); padding: 0; height: 340px; position: relative; overflow: hidden; }
+    .map-placeholder {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #52B788 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .map-placeholder span { font-size: 48px; }
+    .map-placeholder p { color: rgba(255,255,255,0.8); font-size: 17px; }
+
+    /* FAQ */
+    .faq-section { padding: 80px 0; }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 52px; }
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--green-mid);
+    }
+    .faq-item h4 { font-family: 'Lato', sans-serif; font-size: 16px; font-weight: 700; color: var(--green-dark); margin-bottom: 10px; }
+    .faq-item p { font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .faq-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .contact-form-wrap { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon" style="background:none;border-radius:0;box-shadow:none;">
+	   <img src="images/logo.png" alt="Ceylon Wonders logo" style="width:100%;height:100%;object-fit:contain;" />
+       </div>
+        <span class="nav-logo-text">Ceylon<span>Wonders</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="experiences.html">Experiences</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active nav-cta">Plan Trip</a>
+      </div>
+      <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Plan Trip</a>
+    </div>
+  </nav>
+
+  <div style="height:72px;"></div>
+
+  <div class="page-hero">
+    <div class="page-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1400&q=80');"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="container"><div class="page-hero-content"><h1>Plan Your Journey</h1><p>Tell us where you want to go. We'll take it from there.</p></div></div>
+  </div>
+
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- INFO -->
+        <div class="contact-info">
+          <span class="section-label">✦ Get in Touch</span>
+          <h2>We'd Love to Hear From You</h2>
+          <p>Whether you're dreaming of a week-long safari, a honeymoon in the hill country, or a solo adventure along the coast — we're here to help you shape it.</p>
+
+          <div class="info-card">
+            <div class="info-card-icon">📍</div>
+            <div class="info-card-text">
+              <h4>Our Office</h4>
+              <p>42 Temple Lane, Cinnamon Gardens<br/>Colombo 7, Sri Lanka</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon">📞</div>
+            <div class="info-card-text">
+              <h4>Phone & WhatsApp</h4>
+              <p><a href="tel:+94112345678">+94 11 234 5678</a> (office)<br/><a href="tel:+94771234567">+94 77 123 4567</a> (WhatsApp)</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon">✉️</div>
+            <div class="info-card-text">
+              <h4>Email</h4>
+              <p><a href="mailto:hello@ceylonwonders.lk">hello@ceylonwonders.lk</a><br/><a href="mailto:bookings@ceylonwonders.lk">bookings@ceylonwonders.lk</a></p>
+            </div>
+          </div>
+
+          <div class="hours-block">
+            <h4>Office Hours (Sri Lanka Time — UTC+5:30)</h4>
+            <div class="hours-row"><span>Monday – Friday</span><strong>8:00 AM – 6:00 PM</strong></div>
+            <div class="hours-row"><span>Saturday</span><strong>9:00 AM – 3:00 PM</strong></div>
+            <div class="hours-row"><span>Sunday</span><strong>WhatsApp only</strong></div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="contact-form-wrap">
+          <div class="form-header">
+            <h3>Start Planning Your Trip</h3>
+            <p>Fill in a few details and we'll come back to you within 24 hours.</p>
+          </div>
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">First Name *</label>
+                <input type="text" id="fname" placeholder="Sarah" required />
+              </div>
+              <div class="form-group">
+                <label for="lname">Last Name *</label>
+                <input type="text" id="lname" placeholder="Johnson" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" placeholder="sarah@email.com" required />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone / WhatsApp</label>
+                <input type="tel" id="phone" placeholder="+1 234 567 8900" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="interest">Interested In</label>
+                <select id="interest">
+                  <option value="">Select an experience…</option>
+                  <option>Wildlife Safari</option>
+                  <option>Cultural Heritage Tour</option>
+                  <option>Beach & Coastal Escape</option>
+                  <option>Tea Country & Highlands</option>
+                  <option>Surf & Water Sports</option>
+                  <option>Full Island Journey</option>
+                  <option>Custom Itinerary</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="travellers">Number of Travellers</label>
+                <select id="travellers">
+                  <option>Solo</option>
+                  <option>2 people</option>
+                  <option>3–5 people</option>
+                  <option>6–10 people</option>
+                  <option>Group (10+)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="arrival">Arrival Date</label>
+                <input type="date" id="arrival" />
+              </div>
+              <div class="form-group">
+                <label for="duration">Trip Duration</label>
+                <select id="duration">
+                  <option>3–5 days</option>
+                  <option>1 week</option>
+                  <option>10–12 days</option>
+                  <option>2 weeks</option>
+                  <option>3+ weeks</option>
+                  <option>Flexible</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="message">Tell Us About Your Dream Trip</label>
+              <textarea id="message" placeholder="Share any preferences, must-see places, dietary needs, or anything that would help us tailor your journey…"></textarea>
+            </div>
+            <button type="submit" class="btn-primary form-submit">Send My Enquiry →</button>
+            <p class="form-note">🔒 We respect your privacy and never share your details with third parties.</p>
+          </form>
+          <div class="success-msg" id="successMsg">
+            ✅ Thank you! Your enquiry has been received. A member of our team will be in touch within 24 hours.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <div class="map-section">
+    <div class="map-placeholder">
+      <span>🗺️</span>
+      <p>42 Temple Lane, Cinnamon Gardens, Colombo 7, Sri Lanka</p>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="container">
+      <div style="text-align:center;">
+        <span class="section-label">✦ Common Questions</span>
+        <h2 class="section-title">Before You Reach Out</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>How far in advance should I book?</h4>
+          <p>We recommend booking at least 6–8 weeks ahead, especially for peak season (December–March). Last-minute trips are possible but availability can be limited.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you handle visas and flights?</h4>
+          <p>We help with ETA (Electronic Travel Authorisation) guidance and can recommend trusted flight agents, but we specialise in in-country experiences rather than international bookings.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What's your cancellation policy?</h4>
+          <p>Cancellations more than 30 days before departure receive a full refund. Within 30 days, a 20% fee applies. We also offer flexible date changes at no extra cost.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can you design a honeymoon package?</h4>
+          <p>Absolutely — it's one of our specialities. We've designed dozens of romantic itineraries combining boutique stays, private beach access, and intimate cultural moments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo-text">Ceylon<span style="color:var(--gold)">Wonders</span></span>
+          <p>Crafting genuine Sri Lankan travel experiences since 2012.</p>
+          <div class="footer-social">
+            <a href="#" class="fb" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="ig" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="tw" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 5.894 5.45-5.894zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="yt" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="destinations.html">Destinations</a></li><li><a href="experiences.html">Experiences</a></li><li><a href="gallery.html">Gallery</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">📍 Colombo, Sri Lanka</a></li><li><a href="#">📞 +94 11 234 5678</a></li><li><a href="#">✉️ hello@ceylonwonders.lk</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><span>© 2025 Ceylon Wonders. All rights reserved.</span><span>Designed with ❤️ in Sri Lanka</span></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('nav-mobile').classList.toggle('open');
+    });
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fname = document.getElementById('fname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      if (!fname || !email) {
+        alert('Please fill in your name and email before submitting.');
+        return;
+      }
+      this.style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

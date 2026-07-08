@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiences — Ceylon Wonders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png" />
+  <link rel="apple-touch-icon" href="images/favicon-192.png" />
+  <style>
+
+    /* ── QUICK FIND CARDS (top) ── */
+    .quickfind { padding: 48px 0 16px; }
+    .quickfind-title {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .quickfind-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+    }
+    .qf-card {
+      background: var(--white);
+      border: 1.5px solid #E8E4DC;
+      border-radius: var(--radius-lg);
+      padding: 20px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .qf-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--green-mid);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .qf-card:hover, .qf-card.active {
+      border-color: var(--green-mid);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .qf-card:hover::after, .qf-card.active::after { transform: scaleX(1); }
+    .qf-card.active { background: rgba(45,106,79,0.05); }
+    .qf-icon { font-size: 30px; display: block; margin-bottom: 10px; }
+    .qf-card h4 {
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green-dark);
+      line-height: 1.4;
+      letter-spacing: 0.3px;
+    }
+    .qf-card .qf-count {
+      display: inline-block;
+      margin-top: 6px;
+      background: rgba(45,106,79,0.1);
+      color: var(--green-mid);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    /* ── EXPERIENCES SECTION ── */
+    .exp-section { padding: 56px 0 96px; }
+    .exp-category { margin-bottom: 72px; }
+    .exp-category[data-cat] { transition: opacity 0.3s ease; }
+    .exp-category.hidden { display: none; }
+
+    .exp-category-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 32px; padding-bottom: 16px;
+      border-bottom: 2px solid #E0DDD6;
+    }
+    .exp-category-header .cat-left { display: flex; align-items: center; gap: 14px; }
+    .exp-cat-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(45,106,79,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .exp-category-header h2 { font-size: clamp(22px, 3vw, 32px); color: var(--green-dark); }
+    .exp-category-header .see-all { font-size: 14px; font-weight: 700; color: var(--green-mid); white-space: nowrap; }
+
+    .exp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    .exp-full-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex; flex-direction: column;
+    }
+    .exp-full-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .exp-full-card .card-img {
+      height: 200px; position: relative; overflow: hidden;
+    }
+    .exp-full-card .card-img img {
+      height: 100%; width: 100%; object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .exp-full-card:hover .card-img img { transform: scale(1.06); }
+    .exp-full-card .card-img .difficulty {
+      position: absolute; top: 12px; right: 12px;
+      padding: 3px 10px; border-radius: 100px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .diff-easy   { background: rgba(82,183,136,0.9);  color: #fff; }
+    .diff-moderate { background: rgba(212,160,23,0.9); color: #fff; }
+    .diff-active { background: rgba(107,58,42,0.9);   color: #fff; }
+    .diff-seasonal { background: rgba(45,106,79,0.9); color: #fff; }
+
+    .exp-full-card .card-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+    .exp-full-card .card-body h3 { font-size: 19px; color: var(--green-dark); margin-bottom: 7px; }
+    .exp-full-card .card-body p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; flex: 1; }
+    .exp-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 18px; padding-top: 14px;
+      border-top: 1px solid #F0EBE0;
+    }
+    .exp-meta { display: flex; flex-direction: column; gap: 2px; }
+    .exp-duration { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+    .exp-duration span { color: var(--green-mid); }
+    .exp-location { font-size: 11px; color: var(--text-muted); }
+
+    /* ── HIGHLIGHTS STRIP ── */
+    .highlight-strip { background: var(--green-dark); padding: 72px 0; }
+    .highlight-strip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .hl-card { text-align: center; padding: 32px 20px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); }
+    .hl-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+    .hl-card h4 { font-family: 'Lato', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .hl-card p { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) { .quickfind-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px) {
+      .exp-cards { grid-template-columns: 1fr 1fr; }
+      .highlight-strip-grid { grid-template-columns: repeat(2, 1fr); }
+      .quickfind-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .exp-cards { grid-template-columns: 1fr; }
+      .highlight-strip-grid { grid-template-columns: 1fr 1fr; }
+      .quickfind-grid { grid-template-columns: repeat(3, 1fr); }
+      .exp-category-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+    @media (max-width: 400px) {
+      .quickfind-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+	  <div class="nav-logo-icon" style="background:none;border-radius:0;box-shadow:none;">
+	   <img src="images/logo.png" alt="Ceylon Wonders logo" style="width:100%;height:100%;object-fit:contain;" />
+       </div>
+	  <span class="nav-logo-text">Ceylon<span>Wonders</span></span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a><a href="destinations.html">Destinations</a><a href="experiences.html" class="active">Experiences</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a href="contact.html" class="nav-cta">Plan Trip</a>
+      </div>
+      <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="index.html">Home</a><a href="destinations.html">Destinations</a><a href="experiences.html">Experiences</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a href="contact.html">Plan Trip</a>
+    </div>
+  </nav>
+  <div style="height:72px;"></div>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="page-hero-bg" style="background-image:url('images/ea7fd3584b02951e19fb65198f73b5305e2ffb70-3840x2581.avif');"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="container"><div class="page-hero-content"><h1>Experiences</h1><p>Handcrafted adventures that go beyond sightseeing.</p></div></div>
+  </div>
+
+  <!-- QUICK FIND CARDS -->
+  <section class="quickfind">
+    <div class="container">
+      <div class="quickfind-title">
+        <span class="section-label">✦ Quick Find</span>
+        <h2 class="section-title" style="margin-bottom:4px;">Find Your Experience</h2>
+        <p style="font-size:14px; color:var(--text-muted);">Tap a category to jump straight to what interests you.</p>
+      </div>
+      <div class="quickfind-grid">
+        <div class="qf-card active" data-target="all" onclick="filterCat('all', this)">
+          <span class="qf-icon">🗺️</span>
+          <h4>All Experiences</h4>
+          <span class="qf-count">18 Activities</span>
+        </div>
+        <div class="qf-card" data-target="wildlife" onclick="filterCat('wildlife', this)">
+          <span class="qf-icon">🐘</span>
+          <h4>Wildlife & Safari</h4>
+          <span class="qf-count">3 Activities</span>
+        </div>
+        <div class="qf-card" data-target="cultural" onclick="filterCat('cultural', this)">
+          <span class="qf-icon">🏛️</span>
+          <h4>Culture & Heritage</h4>
+          <span class="qf-count">4 Activities</span>
+        </div>
+        <div class="qf-card" data-target="adventure" onclick="filterCat('adventure', this)">
+          <span class="qf-icon">🏄</span>
+          <h4>Adventure & Sports</h4>
+          <span class="qf-count">4 Activities</span>
+        </div>
+        <div class="qf-card" data-target="spiritual" onclick="filterCat('spiritual', this)">
+          <span class="qf-icon">🧘</span>
+          <h4>Spiritual & Wellness</h4>
+          <span class="qf-count">4 Activities</span>
+        </div>
+        <div class="qf-card" data-target="unique" onclick="filterCat('unique', this)">
+          <span class="qf-icon">🎈</span>
+          <h4>Unique & Sky</h4>
+          <span class="qf-count">3 Activities</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES -->
+  <section class="exp-section">
+    <div class="container">
+
+      <!-- ══ WILDLIFE ══ -->
+      <div class="exp-category" data-cat="wildlife">
+        <div class="exp-category-header">
+          <div class="cat-left">
+            <div class="exp-cat-icon">🐘</div>
+            <div><span class="section-label" style="margin-bottom:2px;">Wildlife</span><h2>Safari & Nature</h2></div>
+          </div>
+          <a href="contact.html" class="see-all">Book a Safari →</a>
+        </div>
+        <div class="exp-cards">
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/a8.jpg" alt="Yala Leopard Safari"/>
+              <span class="difficulty diff-active">Active</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Wildlife</span>
+              <h3>Yala Leopard Safari</h3>
+              <p>Dawn game drive in Yala's Block 1 — the zone with the highest leopard density on earth. Your naturalist guide reads the landscape to find elusive cats, elephants, and more.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Full day</span></div>
+                  <div class="exp-location">📍 Yala National Park</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/LK5028E069-08-E.webp" alt="Elephant Gathering"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Wildlife</span>
+              <h3>Minneriya Elephant Gathering</h3>
+              <p>Witness hundreds of wild elephants converge on a drying tank in one of nature's great spectacles, at its peak from July to October each year.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Half day</span></div>
+                  <div class="exp-location">📍 Minneriya, North Central</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/40d6bfb92083e9334e912de9f68b063a3fc16212-1920x1080.avif" alt="Whale Watching"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Marine</span>
+              <h3>Blue Whale Watching</h3>
+              <p>Join a small-boat excursion off Mirissa or Trincomalee to spot the world's largest animal in the warm waters of the Indian Ocean.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>4–5 hours</span></div>
+                  <div class="exp-location">📍 Mirissa / Trincomalee</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ CULTURAL ══ -->
+      <div class="exp-category" data-cat="cultural">
+        <div class="exp-category-header">
+          <div class="cat-left">
+            <div class="exp-cat-icon">🏛️</div>
+            <div><span class="section-label" style="margin-bottom:2px;">Culture</span><h2>Heritage & Festivals</h2></div>
+          </div>
+          <a href="contact.html" class="see-all">Book a Tour →</a>
+        </div>
+        <div class="exp-cards">
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/39989465_1016286145210587_1559765279607619584_n-1.webp" alt="Kandy Perahera"/>
+              <span class="difficulty diff-seasonal">Seasonal</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Festival</span>
+              <h3>Esala Perahera, Kandy</h3>
+              <p>The grandest Buddhist festival in the world — decorated elephants, fire dancers, and drummers parading through the ancient streets of Kandy across ten nights in July/August.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>1 evening</span></div>
+                  <div class="exp-location">📍 Kandy, July–Aug</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/elephant-esala-perahera-festival-katharagama-esala-perahera-katharagama-one-oldest-greatest-all-251334794.webp" alt="Kataragama Perahera"/>
+              <span class="difficulty diff-seasonal">Seasonal</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Festival</span>
+              <h3>Kataragama Perahera</h3>
+              <p>One of Sri Lanka's most sacred and intense religious festivals — firewalkers, kavadi dancers, and torchlit processions at the ancient jungle shrine of Kataragama, revered by Buddhists and Hindus alike.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>1 evening</span></div>
+                  <div class="exp-location">📍 Kataragama, July–Aug</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/44.jpg" alt="Village Cooking"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Food & Culture</span>
+              <h3>Village Cooking Class</h3>
+              <p>Join a local family in their home kitchen. Grind spices by hand, learn to make hoppers and kottu, and eat lunch together on a shaded veranda.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>3–4 hours</span></div>
+                  <div class="exp-location">📍 Village, Central Province</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/360_F_322535378_f2I0DBWZpMIUz6DQdFGzBgasc9uE3CKY.jpg" alt="Sigiriya Sunrise Climb"/>
+              <span class="difficulty diff-moderate">Moderate</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Heritage</span>
+              <h3>Sigiriya Sunrise Climb</h3>
+              <p>Ascend the 5th-century Lion Rock before the crowds arrive. Watch the first golden light wash over ancient water gardens and stretching jungle from the summit terrace.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Half day (early)</span></div>
+                  <div class="exp-location">📍 Sigiriya, Cultural Triangle</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ ADVENTURE ══ -->
+      <div class="exp-category" data-cat="adventure">
+        <div class="exp-category-header">
+          <div class="cat-left">
+            <div class="exp-cat-icon">🏄</div>
+            <div><span class="section-label" style="margin-bottom:2px;">Adventure</span><h2>Active & Outdoors</h2></div>
+          </div>
+          <a href="contact.html" class="see-all">Book an Activity →</a>
+        </div>
+        <div class="exp-cards">
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/Tea-Plantations.jpg" alt="Tea Trail Walk"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Trekking</span>
+              <h3>Tea Estate Trail Walk</h3>
+              <p>Walk the emerald terraces of Nuwara Eliya with a retired tea plucker who'll share the rhythm and stories of a life lived among the bushes.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Half day</span></div>
+                  <div class="exp-location">📍 Nuwara Eliya</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/bd_9218ee6e43.webp" alt="Diving Trincomalee"/>
+              <span class="difficulty diff-active">Active</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Water Sports</span>
+              <h3>Reef Diving, Trincomalee</h3>
+              <p>Plunge into warm, gin-clear waters to explore Pigeon Island's coral gardens, sea turtles, blacktip reef sharks, and tropical fish in vivid abundance.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Full day</span></div>
+                  <div class="exp-location">📍 Pigeon Island, Trincomalee</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/Ambewela-Ella-Train-min.webp" alt="Scenic Train"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Scenic Journey</span>
+              <h3>Highland Railway, Ella to Kandy</h3>
+              <p>Rated one of the world's most beautiful train journeys. Wind through tea country, cloud forest, and mountain passes on a vintage blue train.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>7 hours</span></div>
+                  <div class="exp-location">📍 Ella → Kandy</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/0eb4c2fe-f9ac-42c8-b562-6cb749af27e7.jpeg" alt="Knuckles Trekking"/>
+              <span class="difficulty diff-active">Active</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Trekking</span>
+              <h3>Knuckles Range Trek</h3>
+              <p>Multi-day wilderness trekking through cloud forests, rocky ridges, and mist-fed waterfalls in one of Sri Lanka's most dramatic and biodiverse mountain ranges.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>1–3 days</span></div>
+                  <div class="exp-location">📍 Knuckles, Central Province</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ SPIRITUAL & WELLNESS ══ -->
+      <div class="exp-category" data-cat="spiritual">
+        <div class="exp-category-header">
+          <div class="cat-left">
+            <div class="exp-cat-icon">🧘</div>
+            <div><span class="section-label" style="margin-bottom:2px;">Spiritual & Wellness</span><h2>Peace & Inner Journey</h2></div>
+          </div>
+          <a href="contact.html" class="see-all">Enquire →</a>
+        </div>
+        <div class="exp-cards">
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/Meditation-in-Sri-Lanka-Ella.webp" alt="Jungle Meditation"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Wellness</span>
+              <h3>Meditation in the Jungle</h3>
+              <p>Sit in guided silence deep within a forest monastery or jungle clearing. Connect with the sounds of the rainforest, guided by a Buddhist monk trained in Vipassana techniques.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Half day – 3 days</span></div>
+                  <div class="exp-location">📍 Kandy / Kurunegala area</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/adams-peak-by-night.jpg" alt="Adam's Peak Pilgrimage"/>
+              <span class="difficulty diff-active">Active</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Pilgrimage</span>
+              <h3>Adam's Peak Night Climb</h3>
+              <p>Join thousands of pilgrims on the pre-dawn climb to Sri Lanka's holiest summit. Reach the sacred footprint at sunrise — an unforgettable spiritual and physical journey.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>Overnight</span></div>
+                  <div class="exp-location">📍 Adam's Peak, Sabaragamuwa</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/House-Valley-View-1024.jpg" alt="Ayurveda Retreat"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Wellness</span>
+              <h3>Ayurveda Retreat, Hill Country</h3>
+              <p>Immerse yourself in authentic Sri Lankan Ayurvedic medicine — herbal oil treatments, therapeutic massage, and personalised wellness programmes in a serene highland setting.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>3–7 days</span></div>
+                  <div class="exp-location">📍 Nuwara Eliya / Kandy</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="images/images.jpg" alt="Temple Blessing Ceremony"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Spiritual</span>
+              <h3>Temple Blessing Ceremony</h3>
+              <p>Attend a dawn puja at a centuries-old forest temple with a local monk as your guide — receive blessings, learn the rituals, and sit in contemplative stillness as the jungle wakes up.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>2–3 hours</span></div>
+                  <div class="exp-location">📍 Varies — forest temples</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ UNIQUE & SKY ══ -->
+      <div class="exp-category" data-cat="unique">
+        <div class="exp-category-header">
+          <div class="cat-left">
+            <div class="exp-cat-icon">🎈</div>
+            <div><span class="section-label" style="margin-bottom:2px;">Unique Experiences</span><h2>Sky, Wonder & Beyond</h2></div>
+          </div>
+          <a href="contact.html" class="see-all">Enquire →</a>
+        </div>
+        <div class="exp-cards">
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Hot Air Balloon"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Sky Experience</span>
+              <h3>Hot Air Balloon, Dambulla</h3>
+              <p>Drift silently over the Cultural Triangle at sunrise — ancient rock fortresses, jungle canopy, and shimmering tanks spread below you in the soft morning light. One of Sri Lanka's most magical experiences.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>1 hour flight</span></div>
+                  <div class="exp-location">📍 Dambulla / Sigiriya area</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1559638753-d9d60e06c6be?w=600&q=80" alt="Night Snorkelling"/>
+              <span class="difficulty diff-moderate">Moderate</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Marine</span>
+              <h3>Night Snorkelling, Hikkaduwa</h3>
+              <p>Slip into the warm, phosphorescent waters of Hikkaduwa after dark — bioluminescent plankton light your path as reef fish sleep and sea turtles glide through the darkness around you.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>2 hours</span></div>
+                  <div class="exp-location">📍 Hikkaduwa, South Coast</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-full-card">
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1578894381163-e72c17f2d45f?w=600&q=80" alt="Stilt Fishing"/>
+              <span class="difficulty diff-easy">Easy</span>
+            </div>
+            <div class="card-body">
+              <span class="card-tag">Cultural</span>
+              <h3>Stilt Fishing, Unawatuna</h3>
+              <p>Try one of Sri Lanka's most iconic and photogenic traditions — perch on a pole above the surf at golden hour and cast a line the same way fishermen have done for generations along the southern coast.</p>
+              <div class="exp-card-footer">
+                <div class="exp-meta">
+                  <div class="exp-duration">Duration: <span>1–2 hours</span></div>
+                  <div class="exp-location">📍 Unawatuna / Koggala</div>
+                </div>
+                <a href="contact.html" class="btn-primary" style="padding:8px 16px;font-size:13px;">Book →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HIGHLIGHTS STRIP -->
+  <div class="highlight-strip">
+    <div class="container">
+      <div class="highlight-strip-grid">
+        <div class="hl-card"><span class="hl-icon">🧭</span><h4>Expert-led Only</h4><p>Every experience is led by a qualified local specialist, never a generic tour driver.</p></div>
+        <div class="hl-card"><span class="hl-icon">👥</span><h4>Small Groups</h4><p>Maximum 8 guests per guide, ensuring genuine access and personal attention.</p></div>
+        <div class="hl-card"><span class="hl-icon">🚐</span><h4>Comfortable Transport</h4><p>Air-conditioned vehicles maintained to the highest safety and comfort standards.</p></div>
+        <div class="hl-card"><span class="hl-icon">🍽️</span><h4>Meals Included</h4><p>Most experiences include home-cooked Sri Lankan meals from trusted local partners.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <section style="background:var(--green-mid); padding:64px 0; text-align:center;">
+    <div class="container">
+      <h2 style="color:var(--white); margin-bottom:12px;">Design Your Own Adventure</h2>
+      <p style="color:rgba(255,255,255,0.75); font-size:17px; margin-bottom:32px;">Mix and match experiences into a personalised itinerary.</p>
+      <a href="contact.html" class="btn-primary" style="background:var(--gold); color:var(--green-dark);">Start Planning →</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo-text">Ceylon<span style="color:var(--gold)">Wonders</span></span>
+          <p>A personal guide to Sri Lanka, by Chadunika Hettiarachchi.</p>
+          <div class="footer-social">
+            <a href="#" class="fb" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="ig" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="tw" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 5.894 5.45-5.894zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="yt" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="destinations.html">Destinations</a></li><li><a href="experiences.html">Experiences</a></li><li><a href="gallery.html">Gallery</a></li></ul></div>
+        <div class="footer-col"><h4>Site</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">📍 Sri Lanka</a></li><li><a href="#">✉️ hello@ceylonwonders.lk</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><span>© 2025 Ceylon Wonders · Chadunika Hettiarachchi. All rights reserved.</span><span>Made with ❤️ in Sri Lanka</span></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      document.getElementById('nav-mobile').classList.toggle('open');
+    });
+
+    function filterCat(cat, el) {
+      // update active quick-find card
+      document.querySelectorAll('.qf-card').forEach(function(c) {
+        c.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      // show/hide category sections
+      document.querySelectorAll('.exp-category[data-cat]').forEach(function(sec) {
+        if (cat === 'all' || sec.getAttribute('data-cat') === cat) {
+          sec.classList.remove('hidden');
+        } else {
+          sec.classList.add('hidden');
+        }
+      });
+
+      // smooth scroll to experiences
+      document.querySelector('.exp-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  </script>
+</body>
+</html>

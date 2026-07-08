@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Destinations — Ceylon Wonders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png" />
+  <link rel="apple-touch-icon" href="images/favicon-192.png" />
+  <style>
+    .filter-bar { padding: 36px 0 0; }
+    .filter-bar-inner { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 9px 20px;
+      border-radius: 100px;
+      border: 1.5px solid #D9D5CC;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Lato', sans-serif;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-btn:hover,
+    .filter-btn.active { background: var(--green-mid); color: var(--white); border-color: var(--green-mid); }
+
+    .destinations-section { padding: 40px 0 48px; }
+    .dest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+    .dest-full-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .dest-full-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .dest-full-card .card-img { height: 220px; position: relative; overflow: hidden; }
+    .dest-full-card .card-img img { height: 100%; width: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .dest-full-card:hover .card-img img { transform: scale(1.06); }
+    .dest-full-card .card-img .region-badge {
+      position: absolute;
+      top: 14px; left: 14px;
+      background: rgba(255,255,255,0.95);
+      color: var(--green-dark);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: 100px;
+    }
+    .dest-full-card .card-img .dist-badge {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: rgba(27,67,50,0.88);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dest-info { padding: 22px; }
+    .dest-info h3 { font-size: 21px; color: var(--green-dark); margin-bottom: 7px; }
+    .dest-info p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin-bottom: 14px; }
+    .dest-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+    .dest-tag { background: rgba(45,106,79,0.08); color: var(--green-mid); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: var(--radius-sm); letter-spacing: 0.5px; }
+    .dest-footer { display: flex; align-items: center; justify-content: space-between; }
+    .dest-footer .best-time { font-size: 12px; color: var(--text-muted); }
+    .dest-footer .best-time strong { color: var(--green-dark); }
+
+    /* hidden-card class removed — JS controls visibility entirely */
+
+    /* see more / less bar */
+    .see-more-wrap {
+      text-align: center;
+      padding: 36px 0 64px;
+    }
+    .see-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      color: var(--green-mid);
+      border: 2px solid var(--green-mid);
+      padding: 13px 36px;
+      border-radius: 100px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Lato', sans-serif;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .see-more-btn:hover { background: var(--green-mid); color: var(--white); }
+    .see-more-btn .arrow { font-size: 18px; transition: transform 0.3s ease; }
+    .see-more-btn.open .arrow { transform: rotate(180deg); }
+
+    .dest-count-label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    @media (max-width: 900px) { .dest-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .dest-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+	  <div class="nav-logo-icon" style="background:none;border-radius:0;box-shadow:none;">
+	   <img src="images/logo.png" alt="Ceylon Wonders logo" style="width:100%;height:100%;object-fit:contain;" />
+       </div>
+	  <span class="nav-logo-text">Ceylon<span>Wonders</span></span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="destinations.html" class="active">Destinations</a>
+        <a href="experiences.html">Experiences</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="nav-cta">Plan Trip</a>
+      </div>
+      <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="index.html">Home</a><a href="destinations.html">Destinations</a><a href="experiences.html">Experiences</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a href="contact.html">Plan Trip</a>
+    </div>
+  </nav>
+
+  <div style="height:72px;"></div>
+
+  <div class="page-hero">
+    <div class="page-hero-bg" style="background-image:url('images/cfe4af68-11e4-4ef2-9815-f66ae16012e8.webp');"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="container"><div class="page-hero-content"><h1>Destinations</h1><p>Every region of Sri Lanka has its own tempo, texture, and soul.</p></div></div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <div class="container">
+      <div class="filter-bar-inner">
+        <button class="filter-btn active" data-filter="all">All Destinations</button>
+        <button class="filter-btn" data-filter="city">City</button>
+        <button class="filter-btn" data-filter="cultural">Cultural</button>
+        <button class="filter-btn" data-filter="wildlife">Wildlife</button>
+        <button class="filter-btn" data-filter="beach">Beach</button>
+        <button class="filter-btn" data-filter="highlands">Highlands</button>
+        <button class="filter-btn" data-filter="north">North & East</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESTINATIONS GRID -->
+  <section class="destinations-section">
+    <div class="container">
+      <div class="dest-grid" id="destGrid">
+
+        <!-- 1. COLOMBO — 0 km -->
+        <div class="dest-full-card" data-cat="city" data-index="1">
+          <div class="card-img">
+            <img src="images/istockphoto-2150515282-612x612.jpg" alt="Colombo"/>
+            <span class="region-badge">Western Province</span>
+            <span class="dist-badge">📍 0 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Colombo</h3>
+            <p>Sri Lanka's vibrant capital blends colonial-era architecture, buzzing street markets, rooftop restaurants, and a thriving arts scene along a palm-fringed coastline.</p>
+            <div class="dest-tags"><span class="dest-tag">City</span><span class="dest-tag">Nightlife</span><span class="dest-tag">Food</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Year-round</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 2. SIGIRIYA — 175 km -->
+        <div class="dest-full-card" data-cat="cultural" data-index="2">
+          <div class="card-img">
+            <img src="images/360_F_322535378_f2I0DBWZpMIUz6DQdFGzBgasc9uE3CKY.jpg" alt="Sigiriya"/>
+            <span class="region-badge">Cultural Triangle</span>
+            <span class="dist-badge">📍 175 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Sigiriya</h3>
+            <p>The legendary Lion Rock — a 5th-century palace and fortress rising 200m from the jungle plain, adorned with ancient frescoes and surrounded by water gardens.</p>
+            <div class="dest-tags"><span class="dest-tag">UNESCO</span><span class="dest-tag">History</span><span class="dest-tag">Archaeology</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Jan – Apr</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 3. KANDY — 116 km -->
+        <div class="dest-full-card" data-cat="cultural" data-index="3">
+          <div class="card-img">
+            <img src="images/Queen_s_Hotel_Kandy_5f7dfa59b5-scaled.jpg" alt="Kandy"/>
+            <span class="region-badge">Central Province</span>
+            <span class="dist-badge">📍 116 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Kandy</h3>
+            <p>Sri Lanka's cultural capital, home to the Temple of the Sacred Tooth Relic and the spectacular Esala Perahera — one of Asia's most magnificent festivals.</p>
+            <div class="dest-tags"><span class="dest-tag">UNESCO</span><span class="dest-tag">Temples</span><span class="dest-tag">Festival</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Year-round</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 4. GALLE — 116 km -->
+        <div class="dest-full-card" data-cat="cultural" data-index="4">
+          <div class="card-img">
+            <img src="images/istockphoto-1809403899-612x612.jpg" alt="Galle"/>
+            <span class="region-badge">Southern Province</span>
+            <span class="dist-badge">📍 116 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Galle</h3>
+            <p>A UNESCO-listed Dutch colonial fort town perched on a rocky promontory, its cobblestone streets lined with boutique hotels, art galleries, and sea-view cafés.</p>
+            <div class="dest-tags"><span class="dest-tag">UNESCO</span><span class="dest-tag">Colonial</span><span class="dest-tag">Fort</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Nov – Apr</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 5. ELLA — 197 km -->
+        <div class="dest-full-card" data-cat="highlands" data-index="5">
+          <div class="card-img">
+            <img src="images/demodara-nine-arch-bridge-ella-sri-lanka-scaled-1_77c0b1eb-4170-472a-b6df-950903726734.jpg" alt="Ella"/>
+            <span class="region-badge">Uva Province</span>
+            <span class="dist-badge">📍 197 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Ella</h3>
+            <p>A small highland town perched above cloud level with sweeping valley views, the iconic Nine Arches Bridge, and the world's most scenic train ride to reach it.</p>
+            <div class="dest-tags"><span class="dest-tag">Tea Trails</span><span class="dest-tag">Hiking</span><span class="dest-tag">Train</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Jan – Mar</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 6. MIRISSA — 150 km -->
+        <div class="dest-full-card" data-cat="beach" data-index="6">
+          <div class="card-img">
+            <img src="images/coco.jpg" alt="Mirissa"/>
+            <span class="region-badge">South Coast</span>
+            <span class="dist-badge">📍 150 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Mirissa</h3>
+            <p>A dreamy crescent of golden sand. By day, spot blue whales offshore; by evening, watch the sun sink into the Indian Ocean from a coconut-lined shore.</p>
+            <div class="dest-tags"><span class="dest-tag">Whales</span><span class="dest-tag">Surf</span><span class="dest-tag">Sunsets</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Nov – Apr</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 7. POLONNARUWA — 216 km  [hidden by default] -->
+        <div class="dest-full-card hidden-card" data-cat="cultural" data-index="7">
+          <div class="card-img">
+            <img src="images/sacred-quadrangle-at-polonnaruwa-ancient-city-pulathisipura-and-vijayarajapura-in-sri-lanka-photo.jpg" alt="Polonnaruwa"/>
+            <span class="region-badge">Cultural Triangle</span>
+            <span class="dist-badge">📍 216 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Polonnaruwa</h3>
+            <p>A medieval royal capital spread across the plains — colossal Buddha statues, intact palaces, and vast irrigation tanks that still water the land today.</p>
+            <div class="dest-tags"><span class="dest-tag">UNESCO</span><span class="dest-tag">Ruins</span><span class="dest-tag">Cycling</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>May – Sep</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 8. YALA — 300 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="wildlife" data-index="8">
+          <div class="card-img">
+            <img src="images/yala-leopard.webp" alt="Yala"/>
+            <span class="region-badge">Southern Province</span>
+            <span class="dist-badge">📍 300 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Yala National Park</h3>
+            <p>Home to the world's densest wild leopard population. Also elephants, sloth bears, crocodiles, and over 200 bird species in stunning dry-zone terrain.</p>
+            <div class="dest-tags"><span class="dest-tag">Safari</span><span class="dest-tag">Leopards</span><span class="dest-tag">Birdwatching</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Feb – Jul</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 9. UDAWALAWE — 165 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="wildlife" data-index="9">
+          <div class="card-img">
+            <img src="images/udawalawe-national-park.jpg" alt="Udawalawe"/>
+            <span class="region-badge">Sabaragamuwa</span>
+            <span class="dist-badge">📍 165 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Udawalawe</h3>
+            <p>The best place in Sri Lanka to see large herds of wild elephants — up to 600 individuals roam this 30,000-hectare park around a vast reservoir.</p>
+            <div class="dest-tags"><span class="dest-tag">Elephants</span><span class="dest-tag">Safari</span><span class="dest-tag">Family</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Year-round</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 10. TRINCOMALEE — 257 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="beach" data-index="10">
+          <div class="card-img">
+            <img src="images/01.jpg" alt="Trincomalee"/>
+            <span class="region-badge">East Coast</span>
+            <span class="dist-badge">📍 257 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Trincomalee</h3>
+            <p>Crystal-clear lagoons, deserted white-sand bays, and some of Asia's best snorkelling and diving in the warm waters of Pigeon Island Marine National Park.</p>
+            <div class="dest-tags"><span class="dest-tag">Diving</span><span class="dest-tag">Snorkelling</span><span class="dest-tag">Beaches</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>May – Sep</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 11. ADAM'S PEAK — 102 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="highlands" data-index="11">
+          <div class="card-img">
+            <img src="images/climbing-adams-peak-bell-mountain.jpg" alt="Adam's Peak"/>
+            <span class="region-badge">Sabaragamuwa</span>
+            <span class="dist-badge">📍 102 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Adam's Peak</h3>
+            <p>Sri Lanka's most sacred mountain, revered by Buddhists, Hindus, Muslims, and Christians alike. The pre-dawn pilgrimage to the summit is a deeply spiritual experience.</p>
+            <div class="dest-tags"><span class="dest-tag">Pilgrimage</span><span class="dest-tag">Trekking</span><span class="dest-tag">Sunrise</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Dec – May</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 12. LIPTON'S SEAT (Haputale) — 186 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="highlands" data-index="12">
+          <div class="card-img">
+            <img src="images/e2.jpg" alt="Lipton's Seat, Haputale"/>
+            <span class="region-badge">Uva Province</span>
+            <span class="dist-badge">📍 186 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Lipton's Seat, Haputale</h3>
+            <p>Perched at 1,970m, this legendary viewpoint — favoured by Sir Thomas Lipton himself — offers a 270° panorama over rolling tea estates, valleys, and on a clear day, both coasts of Sri Lanka.</p>
+            <div class="dest-tags"><span class="dest-tag">Tea Country</span><span class="dest-tag">Viewpoint</span><span class="dest-tag">Hiking</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Jan – Apr</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 13. KNUCKLES MOUNTAIN RANGE — 120 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="highlands" data-index="13">
+          <div class="card-img">
+            <img src="images/knuckles-mountain-range-001-1.avif" alt="Knuckles Mountain Range"/>
+            <span class="region-badge">Central Province</span>
+            <span class="dist-badge">📍 120 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Knuckles Mountain Range</h3>
+            <p>A UNESCO World Heritage wilderness of jagged cloud-capped peaks, misty waterfalls, and rare endemic wildlife — one of Sri Lanka's last true frontiers for trekkers and naturalists.</p>
+            <div class="dest-tags"><span class="dest-tag">UNESCO</span><span class="dest-tag">Trekking</span><span class="dest-tag">Wildlife</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Feb – May</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 14. UPPER DIYALUMA FALLS — 195 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="highlands" data-index="14">
+          <div class="card-img">
+            <img src="images/29.jpg" alt="Upper Diyaluma Falls"/>
+            <span class="region-badge">Uva Province</span>
+            <span class="dist-badge">📍 195 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Upper Diyaluma Falls</h3>
+            <p>Sri Lanka's second highest waterfall at 171m, with a series of stunning natural infinity pools at the top that cascade down through lush jungle. A hidden gem worth every step of the climb.</p>
+            <div class="dest-tags"><span class="dest-tag">Waterfall</span><span class="dest-tag">Natural Pools</span><span class="dest-tag">Hiking</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>Oct – Jan</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+        <!-- 15. JAFFNA — 400 km  [hidden] -->
+        <div class="dest-full-card hidden-card" data-cat="north" data-index="15">
+          <div class="card-img">
+            <img src="images/Jaffna-Fort-Sri-Lanka.jpg" alt="Jaffna"/>
+            <span class="region-badge">Northern Province</span>
+            <span class="dist-badge">📍 400 km</span>
+          </div>
+          <div class="dest-info">
+            <h3>Jaffna</h3>
+            <p>Sri Lanka's northern heart — a city of Tamil heritage, vivid Hindu temples, Dutch colonial forts, and a distinctive cuisine flavoured with palmyra and fresh seafood.</p>
+            <div class="dest-tags"><span class="dest-tag">Heritage</span><span class="dest-tag">Temples</span><span class="dest-tag">Cuisine</span></div>
+            <div class="dest-footer"><div class="best-time">Best time: <strong>May – Sep</strong></div><a href="contact.html" class="btn-primary" style="padding:9px 18px;font-size:13px;">Plan Visit →</a></div>
+          </div>
+        </div>
+
+      </div><!-- /.dest-grid -->
+    </div>
+  </section>
+
+  <!-- SEE MORE / LESS -->
+  <div class="see-more-wrap" id="seeMoreWrap">
+    <button class="see-more-btn" id="seeMoreBtn">
+      <span id="seeMoreText">See More Destinations</span>
+      <span class="arrow" id="seeMoreArrow">▼</span>
+    </button>
+    <span class="dest-count-label" id="countLabel">Showing 6 of 15 destinations</span>
+  </div>
+
+  <section style="background:var(--green-mid); padding:64px 0; text-align:center;">
+    <div class="container">
+      <h2 style="color:var(--white); margin-bottom:12px;">Can't Decide? We'll Help.</h2>
+      <p style="color:rgba(255,255,255,0.75); font-size:17px; margin-bottom:32px;">Tell us your interests and travel dates and we'll design a custom route.</p>
+      <a href="contact.html" class="btn-primary" style="background:var(--gold); color:var(--green-dark);">Build My Itinerary →</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo-text">Ceylon<span style="color:var(--gold)">Wonders</span></span>
+          <p>Crafting genuine Sri Lankan travel experiences since 2012.</p>
+          <div class="footer-social">
+            <a href="#" class="fb" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="ig" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="tw" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 5.894 5.45-5.894zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="yt" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="destinations.html">Destinations</a></li><li><a href="experiences.html">Experiences</a></li><li><a href="gallery.html">Gallery</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">📍 Colombo, Sri Lanka</a></li><li><a href="#">📞 +94 11 234 5678</a></li><li><a href="#">✉️ hello@ceylonwonders.lk</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><span>© 2025 Ceylon Wonders. All rights reserved.</span><span>Designed with ❤️ in Sri Lanka</span></div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Navbar hamburger ── */
+    document.getElementById('hamburger').addEventListener('click', function() {
+      document.getElementById('nav-mobile').classList.toggle('open');
+    });
+
+    /* ── Config ── */
+    var INITIAL_SHOW = 6;
+    var expanded = false;
+    var currentFilter = 'all';
+
+    var allCards = Array.from(document.querySelectorAll('.dest-full-card'));
+
+    /* ── Core render function ── */
+    function render() {
+      // get cards matching current filter
+      var matched = allCards.filter(function(card) {
+        return currentFilter === 'all' || card.getAttribute('data-cat') === currentFilter;
+      });
+
+      var total = matched.length;
+
+      // show/hide each card
+      allCards.forEach(function(card) {
+        card.style.display = 'none';
+      });
+
+      var limit = expanded ? total : Math.min(INITIAL_SHOW, total);
+      for (var i = 0; i < limit; i++) {
+        matched[i].style.display = 'block';
+      }
+
+      // update button + label
+      var wrap  = document.getElementById('seeMoreWrap');
+      var label = document.getElementById('countLabel');
+      var btnText = document.getElementById('seeMoreText');
+      var btnEl   = document.getElementById('seeMoreBtn');
+
+      if (total <= INITIAL_SHOW) {
+        wrap.style.display = 'none';
+      } else {
+        wrap.style.display = 'block';
+        label.textContent = 'Showing ' + limit + ' of ' + total + ' destinations';
+        if (expanded) {
+          btnText.textContent = 'Show Less';
+          btnEl.classList.add('open');
+        } else {
+          btnText.textContent = 'See More Destinations';
+          btnEl.classList.remove('open');
+        }
+      }
+    }
+
+    /* ── Filter buttons ── */
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        filterBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
+        expanded = false;
+        render();
+      });
+    });
+
+    /* ── See more / less button ── */
+    document.getElementById('seeMoreBtn').addEventListener('click', function() {
+      expanded = !expanded;
+      render();
+      if (!expanded) {
+        document.getElementById('destGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    /* ── Init on page load ── */
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — Ceylon Wonders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png" /> 
+  <link rel="apple-touch-icon" href="images/favicon-192.png" />
+  <style>
+    .gallery-filter { padding: 36px 0 0; }
+    .gallery-filter-inner { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 9px 20px; border-radius: 100px;
+      border: 1.5px solid #D9D5CC;
+      background: transparent; font-size: 14px; font-weight: 600;
+      font-family: 'Lato', sans-serif; color: var(--text-muted);
+      cursor: pointer; transition: var(--transition);
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--green-mid); color: var(--white); border-color: var(--green-mid); }
+
+    .gallery-section { padding: 40px 0 96px; }
+    .masonry-grid {
+      columns: 3;
+      column-gap: 20px;
+    }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .gallery-item img { width: 100%; display: block; transition: transform 0.5s ease; }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(27,67,50,0.9) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay h4 { color: var(--white); font-size: 16px; margin-bottom: 4px; }
+    .gallery-overlay span { color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-content { position: relative; max-width: 880px; width: 100%; }
+    .lightbox-content img { width: 100%; border-radius: var(--radius-lg); max-height: 80vh; object-fit: contain; background: #000; }
+    .lightbox-close {
+      position: absolute;
+      top: -48px; right: 0;
+      color: var(--white);
+      font-size: 28px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.1);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+    .lightbox-caption { color: rgba(255,255,255,0.75); font-size: 15px; margin-top: 12px; text-align: center; }
+    .lightbox-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 16px; }
+    .lightbox-nav button {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      padding: 8px 20px;
+      border-radius: 100px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: 'Lato', sans-serif;
+      transition: var(--transition);
+    }
+    .lightbox-nav button:hover { background: rgba(255,255,255,0.2); }
+
+    @media (max-width: 900px) { .masonry-grid { columns: 2; } }
+    @media (max-width: 500px) { .masonry-grid { columns: 1; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"> 
+	  <div class="nav-logo-icon" style="background:none;border-radius:0;box-shadow:none;">
+	   <img src="images/logo.png" alt="Ceylon Wonders logo" style="width:100%;height:100%;object-fit:contain;" />
+       </div>
+	  <span class="nav-logo-text">Ceylon<span>Wonders</span></span></a>
+      <div class="nav-links"><a href="index.html">Home</a><a href="destinations.html">Destinations</a><a href="experiences.html">Experiences</a><a href="gallery.html" class="active">Gallery</a><a href="about.html">About</a><a href="contact.html" class="nav-cta">Plan Trip</a></div>
+      <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="nav-mobile" id="nav-mobile"><a href="index.html">Home</a><a href="destinations.html">Destinations</a><a href="experiences.html">Experiences</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a href="contact.html">Plan Trip</a></div>
+  </nav>
+  <div style="height:72px;"></div>
+
+  <div class="page-hero">
+    <div class="page-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1400&q=80');"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="container"><div class="page-hero-content"><h1>Gallery</h1><p>Sri Lanka through the eyes of those who love it most.</p></div></div>
+  </div>
+
+  <div class="gallery-filter">
+    <div class="container">
+      <div class="gallery-filter-inner">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="landscapes">Landscapes</button>
+        <button class="filter-btn" data-filter="wildlife">Wildlife</button>
+        <button class="filter-btn" data-filter="culture">Culture</button>
+        <button class="filter-btn" data-filter="beaches">Beaches</button>
+        <button class="filter-btn" data-filter="food">Food</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="gallery-section">
+    <div class="container">
+      <div class="masonry-grid" id="masonryGrid">
+
+        <div class="gallery-item" data-cat="landscapes" data-title="Sigiriya at Dawn" data-loc="Cultural Triangle" onclick="openLightbox(this)">
+          <img src="images/360_F_322535378_f2I0DBWZpMIUz6DQdFGzBgasc9uE3CKY.jpg" alt="Sigiriya at Dawn"/>
+          <div class="gallery-overlay"><h4>Sigiriya at Dawn</h4><span>Cultural Triangle</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="beaches" data-title="Mirissa Golden Hour" data-loc="South Coast" onclick="openLightbox(this)">
+          <img src="images/DSC_0193-870x600.jpg" alt="Mirissa Golden Hour"/>
+          <div class="gallery-overlay"><h4>Mirissa Golden Hour</h4><span>South Coast</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="landscapes" data-title="Nuwara Eliya Tea Terraces" data-loc="Hill Country" onclick="openLightbox(this)">
+          <img src="images/Tea-Plantations.jpg" alt="Tea Terraces"/>
+          <div class="gallery-overlay"><h4>Tea Terraces</h4><span>Hill Country</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="wildlife" data-title="Wild Elephant, Udawalawe" data-loc="Sabaragamuwa" onclick="openLightbox(this)">
+          <img src="images/images (1).jpg" alt="Wild Elephant"/>
+          <div class="gallery-overlay"><h4>Wild Elephant</h4><span>Udawalawe</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="culture" data-title="Temple of the Tooth Relic" data-loc="Kandy" onclick="openLightbox(this)">
+          <img src="images/Dalada-Maligava-tooth-Buddha-Sri-Lanka-Kandy.webp" alt="Kandy Temple"/>
+          <div class="gallery-overlay"><h4>Temple of the Tooth</h4><span>Kandy</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="landscapes" data-title="Nine Arches Bridge, Ella" data-loc="Uva Province" onclick="openLightbox(this)">
+          <img src="images/images (3).jpg" alt="Nine Arches Bridge"/>
+          <div class="gallery-overlay"><h4>Nine Arches Bridge</h4><span>Ella</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="wildlife" data-title="Leopard, Yala National Park" data-loc="Southern Province" onclick="openLightbox(this)">
+          <img src="images/images (2).jpg" alt="Yala Leopard"/>
+          <div class="gallery-overlay"><h4>Leopard</h4><span>Yala National Park</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="beaches" data-title="Trincomalee Lagoon" data-loc="East Coast" onclick="openLightbox(this)">
+          <img src="images/Untitled-1_3cf1d0b1-de58-4d8b-8545-60898a09bdb3.webp" alt="Trincomalee Lagoon"/>
+          <div class="gallery-overlay"><h4>Trincomalee Lagoon</h4><span>East Coast</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="culture" data-title="Village Life, Kandy District" data-loc="Central Province" onclick="openLightbox(this)">
+          <img src="images/sri-lanka-tuk-tuk.webp" alt="Village Life"/>
+          <div class="gallery-overlay"><h4>Village Life</h4><span>Kandy District</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="landscapes" data-title="Sunrise over the Ancient City" data-loc="Polonnaruwa" onclick="openLightbox(this)">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Ancient Ruins"/>
+          <div class="gallery-overlay"><h4>Ancient City at Sunrise</h4><span>Polonnaruwa</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="wildlife" data-title="Blue Whale, Indian Ocean" data-loc="Off Mirissa" onclick="openLightbox(this)">
+          <img src="images/40d6bfb92083e9334e912de9f68b063a3fc16212-1920x1080.avif" alt="Blue Whale"/>
+          <div class="gallery-overlay"><h4>Blue Whale</h4><span>Indian Ocean</span></div>
+        </div>
+
+        <div class="gallery-item" data-cat="food" data-title="Sri Lankan Rice & Curry" data-loc="Nationwide" onclick="openLightbox(this)">
+          <img src="images/images (4).jpg" alt="Sri Lankan Food"/>
+          <div class="gallery-overlay"><h4>Rice & Curry</h4><span>Sri Lankan Cuisine</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <div class="lightbox-content">
+      <div class="lightbox-close" onclick="closeLightboxDirect()">✕</div>
+      <img id="lightboxImg" src="" alt="" />
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+      <div class="lightbox-nav">
+        <button onclick="navigate(-1)">← Prev</button>
+        <button onclick="navigate(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+
+   <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo-text">Ceylon<span style="color:var(--gold)">Wonders</span></span>
+          <p>Crafting genuine Sri Lankan travel experiences since 2012.</p>
+          <div class="footer-social">
+            <a href="#" class="fb" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="ig" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="tw" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 5.894 5.45-5.894zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="yt" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="destinations.html">Destinations</a></li><li><a href="experiences.html">Experiences</a></li><li><a href="gallery.html">Gallery</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">📍 Colombo, Sri Lanka</a></li><li><a href="#">📞 +94 11 234 5678</a></li><li><a href="#">✉️ hello@ceylonwonders.lk</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><span>© 2025 Ceylon Wonders. All rights reserved.</span><span>Designed with ❤️ in Sri Lanka</span></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('nav-mobile').classList.toggle('open');
+    });
+
+    // FILTER
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll('.gallery-item');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        items.forEach(item => {
+          item.style.display = (filter === 'all' || item.dataset.cat === filter) ? '' : 'none';
+        });
+      });
+    });
+
+    // LIGHTBOX
+    let currentIdx = 0;
+    let visibleItems = [];
+
+    function openLightbox(el) {
+      visibleItems = Array.from(document.querySelectorAll('.gallery-item')).filter(i => i.style.display !== 'none');
+      currentIdx = visibleItems.indexOf(el);
+      showSlide(currentIdx);
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showSlide(idx) {
+      const item = visibleItems[idx];
+      const img = item.querySelector('img');
+      document.getElementById('lightboxImg').src = img.src;
+      document.getElementById('lightboxCaption').textContent = item.dataset.title + ' — ' + item.dataset.loc;
+    }
+
+    function navigate(dir) {
+      currentIdx = (currentIdx + dir + visibleItems.length) % visibleItems.length;
+      showSlide(currentIdx);
+    }
+
+    function closeLightboxDirect() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closeLightbox(e) {
+      if (e.target === document.getElementById('lightbox')) closeLightboxDirect();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('lightbox').classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightboxDirect();
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'ArrowRight') navigate(1);
+    });
+  </script>
+</body>
+</html>

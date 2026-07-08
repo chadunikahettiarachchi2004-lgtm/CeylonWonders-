@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Ceylon Wonders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png" />
+<link rel="apple-touch-icon" href="images/favicon-192.png" />
+  <style>
+    /* ── FOUNDER HERO ── */
+    .founder-section { padding: 96px 0; }
+    .founder-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 80px; align-items: center; }
+
+    .founder-img-wrap { position: relative; }
+    .founder-img {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      height: 700px;
+      box-shadow: var(--shadow-lg);
+    }
+    .founder-img img { height: 100%; width: 100%; object-fit: cover; }
+    .founder-badge {
+      position: absolute;
+      bottom: -20px; right: -20px;
+      background: var(--gold);
+      color: var(--green-dark);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .founder-badge .big { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; display: block; line-height: 1; }
+    .founder-badge .small { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; line-height: 1.4; display: block; margin-top: 4px; }
+
+    .founder-text .section-label { color: var(--gold); }
+    .founder-name {
+      font-size: clamp(30px, 4vw, 46px);
+      color: var(--green-dark);
+      margin-bottom: 4px;
+    }
+    .founder-title {
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 28px;
+      display: block;
+    }
+    .founder-text blockquote {
+      border-left: 3px solid var(--gold);
+      padding-left: 20px;
+      margin: 0 0 28px;
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      font-style: italic;
+      color: var(--green-dark);
+      line-height: 1.65;
+    }
+    .founder-text p { color: var(--text-muted); line-height: 1.9; margin-bottom: 16px; font-size: 15px; }
+
+    .founder-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+    .founder-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(45,106,79,0.08);
+      color: var(--green-mid);
+      border: 1px solid rgba(45,106,79,0.15);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 100px;
+    }
+
+    /* ── STORY TIMELINE ── */
+    .story-section { background: var(--green-dark); padding: 88px 0; }
+    .story-section .section-label { color: var(--gold); }
+    .story-section .section-title { color: var(--white); }
+    .story-section .section-subtitle { color: rgba(255,255,255,0.6); }
+
+    .timeline { margin-top: 56px; position: relative; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 0; bottom: 0;
+      width: 2px;
+      background: rgba(255,255,255,0.1);
+      transform: translateX(-50%);
+    }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      align-items: center;
+      margin-bottom: 52px;
+    }
+    .tl-year {
+      width: 56px; height: 56px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--green-dark);
+      z-index: 2;
+      justify-self: center;
+      flex-shrink: 0;
+    }
+    .tl-text { padding: 0 32px; }
+    .tl-text h4 { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); margin-bottom: 6px; }
+    .tl-text p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+    .tl-right { text-align: right; }
+    .tl-left  { text-align: left; }
+    .tl-empty { }
+
+    /* ── VALUES ── */
+    .values-section { background: var(--cream-dark); padding: 88px 0; }
+    .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 52px; }
+    .value-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      border-top: 4px solid var(--green-mid);
+      transition: var(--transition);
+    }
+    .value-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .value-icon { font-size: 36px; margin-bottom: 16px; }
+    .value-card h3 { font-size: 19px; color: var(--green-dark); margin-bottom: 10px; }
+    .value-card p { font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+
+    /* ── PERSONAL NOTE ── */
+    .personal-note { padding: 88px 0; }
+    .note-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .note-avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      background: var(--green-mid);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--white);
+      margin: 0 auto 24px;
+      border: 4px solid var(--gold);
+    }
+    .note-inner blockquote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-style: italic;
+      color: var(--green-dark);
+      line-height: 1.7;
+      margin: 0 0 24px;
+    }
+    .note-inner .note-sig {
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .note-inner .note-sig span { color: var(--green-mid); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .founder-grid { grid-template-columns: 1fr; gap: 48px; }
+      .founder-img { height: 360px; }
+      .founder-badge { bottom: 12px; right: 12px; }
+      .values-grid { grid-template-columns: 1fr 1fr; }
+      .timeline::before { left: 27px; }
+      .tl-item { grid-template-columns: 56px 1fr; }
+      .tl-right { display: none; }
+      .tl-year { justify-self: start; }
+    }
+    @media (max-width: 640px) {
+      .values-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" >
+       <div class="nav-logo-icon" style="background:none;border-radius:0;box-shadow:none;">
+	   <img src="images/logo.png" alt="Ceylon Wonders logo" style="width:100%;height:100%;object-fit:contain;" />
+       </div>
+        <span class="nav-logo-text">Ceylon<span>Wonders</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="experiences.html">Experiences</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html" class="active">About</a>
+        <a href="contact.html" class="nav-cta">Plan Trip</a>
+      </div>
+      <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Plan Trip</a>
+    </div>
+  </nav>
+
+  <div style="height:72px;"></div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-bg" style="background-image: url('images/s2.jpg');"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="container">
+      <div class="page-hero-content">
+        <h1>About Ceylon Wonders</h1>
+        <p>A personal guide built to help you find the real Sri Lanka.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURPOSE -->
+  <section class="founder-section">
+    <div class="container">
+      <div class="founder-grid">
+
+        <div class="founder-img-wrap">
+          <div class="founder-img">
+            <img src="images/large-detailed-tourist-map-of-sri-lanka.jpg" alt="Sri Lanka landscape" />
+          </div>
+          <div class="founder-badge">
+            <span class="big">12+</span>
+            <span class="small">Years Exploring<br/>Sri Lanka</span>
+          </div>
+        </div>
+
+        <div class="founder-text">
+          <span class="section-label">✦ Why This Site Exists</span>
+          <h2 class="founder-name">The Real Sri Lanka, Beyond the Postcards</h2>
+          <span class="founder-title">A Personal Guide, Not a Travel Brochure</span>
+
+          <blockquote>
+            "Sri Lanka deserves more than a highlight reel — it deserves an honest, detailed guide."
+          </blockquote>
+
+          <p>Ceylon Wonders was built to fix a simple problem: most travel sites about Sri Lanka either read like recycled brochures or bury useful details under sponsored content. This site exists to give travellers something more reliable — honest, first-hand guidance to the island's destinations, experiences, and hidden corners.</p>
+
+          <p>There's no large team behind the scenes, no paid placements, and no filler. Every destination write-up, itinerary idea, and recommendation on this site is based on genuine, first-hand experience — not repackaged press releases.</p>
+
+          <p>The goal is simple: help you find the Sri Lanka that doesn't show up in brochures — the chai at a roadside tea shack at 5am, the elephant crossing a jungle trail, the fisherman's sunrise in Negombo. The real island, described honestly.</p>
+
+          <div class="founder-tags">
+            <span class="founder-tag">🌿 Honest Guides</span>
+            <span class="founder-tag">📸 First-Hand Photos</span>
+            <span class="founder-tag">🤝 Local-First</span>
+            <span class="founder-tag">🚫 No Sponsored Content</span>
+            <span class="founder-tag">🗺️ Practical Detail</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="values-section">
+    <div class="container">
+      <div style="text-align:center;">
+        <span class="section-label">✦ What Guides This Project</span>
+        <h2 class="section-title">Core Values Behind the Site</h2>
+        <p class="section-subtitle" style="margin: 0 auto;">Everything on this site reflects a consistent set of principles.</p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">🌱</div>
+          <h3>Responsible Travel</h3>
+          <p>Only places and experiences that respect local communities, wildlife, and the environment are featured. If it harms the island, it won't appear here.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🤝</div>
+          <h3>Support Locals</h3>
+          <p>Family-run guesthouses, village food stalls, and local guides are prioritised over large tourist chains — so your money stays in the community.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">✨</div>
+          <h3>Authenticity First</h3>
+          <p>No paid placements, no sponsorships that distort recommendations. Every suggestion is somewhere that's been personally visited and genuinely recommended.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🔍</div>
+          <h3>Honest & Detailed</h3>
+          <p>Guides cover the real experience — the crowd at the wrong time, the slippery trail, the hidden gem around the corner. No sugar-coating.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🛡️</div>
+          <h3>Traveller Safety</h3>
+          <p>Practical safety tips, seasonal advice, and honest assessments of difficulty are part of every destination guide.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">📖</div>
+          <h3>Always Updated</h3>
+          <p>Sri Lanka keeps changing. This site is regularly revisited and updated so guides stay accurate and useful.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY STORY TIMELINE -->
+  <section class="story-section">
+    <div class="container">
+      <div style="text-align:center;">
+        <span class="section-label">✦ The Journey</span>
+        <h2 class="section-title">How Ceylon Wonders Began</h2>
+        <p class="section-subtitle" style="color:rgba(255,255,255,0.6); margin: 0 auto;">A timeline of how this site came together.</p>
+      </div>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-text tl-right tl-empty"></div>
+          <div class="tl-year">2012</div>
+          <div class="tl-text tl-left">
+            <h4>First Notes on the Cultural Triangle</h4>
+            <p>The earliest research began with trips across Sigiriya, Polonnaruwa, and Anuradhapura — the first notes that would later shape this site's guides.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-text tl-right">
+            <h4>Highlands Content Takes Shape</h4>
+            <p>A month spent exploring Ella, Haputale, and Knuckles produced the detailed hiking and tea-country guides now featured on the site.</p>
+          </div>
+          <div class="tl-year">2015</div>
+          <div class="tl-text tl-left tl-empty"></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-text tl-right tl-empty"></div>
+          <div class="tl-year">2018</div>
+          <div class="tl-text tl-left">
+            <h4>Coverage Expands North</h4>
+            <p>Research trips to Jaffna and the Mannar coast added guides to a side of Sri Lanka most visitors never see.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-text tl-right">
+            <h4>Ceylon Wonders Launched</h4>
+            <p>Years of notes, photos, and recommendations were finally turned into this website — a practical, honest guide to Sri Lanka.</p>
+          </div>
+          <div class="tl-year">2021</div>
+          <div class="tl-text tl-left tl-empty"></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-text tl-right tl-empty"></div>
+          <div class="tl-year">Now</div>
+          <div class="tl-text tl-left">
+            <h4>Still Growing</h4>
+            <p>Guides are continually updated and expanded, with new destination content added as more of the island is explored.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER NOTE -->
+  <section class="personal-note">
+    <div class="container">
+      <div class="note-inner">
+        <div class="note-avatar">
+          <img src="images/hq720.jpg" alt="Chadunika Hettiarachchi" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />
+        </div>
+        <blockquote>
+          "Sri Lanka is small enough to feel intimate and vast enough to surprise you every single time. I've been exploring it for over a decade and I'm still not done. I hope this site helps you find your own version of this extraordinary island."
+        </blockquote>
+        <p class="note-sig">— <span>Chadunika Hettiarachchi</span>, Founder · Ceylon Wonders</p>
+        <p style="font-size:14px; color:var(--text-muted); max-width:520px; margin:12px auto 0; line-height:1.7;">Born and raised in Sri Lanka, Chadunika has spent over a decade travelling the island and built Ceylon Wonders to share that first-hand experience with other travellers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="background:var(--green-mid); padding:64px 0; text-align:center;">
+    <div class="container">
+      <h2 style="color:var(--white); font-size:clamp(24px,3.5vw,38px); margin-bottom:12px;">Have Questions About Sri Lanka?</h2>
+      <p style="color:rgba(255,255,255,0.75); font-size:17px; margin-bottom:32px;">I read every message personally and try to reply within 24 hours.</p>
+      <a href="contact.html" class="btn-primary" style="background:var(--gold); color:var(--green-dark);">Get in Touch →</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo-text">Ceylon<span style="color:var(--gold)">Wonders</span></span>
+          <p>A personal guide to Sri Lanka, by Chadunika Hettiarachchi.</p>
+          <div class="footer-social">
+            <a href="#" class="fb" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="ig" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="tw" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 5.894 5.45-5.894zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="yt" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="destinations.html">Destinations</a></li><li><a href="experiences.html">Experiences</a></li><li><a href="gallery.html">Gallery</a></li></ul></div>
+        <div class="footer-col"><h4>Site</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">📍 Sri Lanka</a></li><li><a href="#">✉️ hello@ceylonwonders.lk</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 Ceylon Wonders · Chadunika Hettiarachchi. All rights reserved.</span>
+        <span>Made with ❤️ in Sri Lanka</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      document.getElementById('nav-mobile').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
